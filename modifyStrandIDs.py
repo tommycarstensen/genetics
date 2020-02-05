@@ -66,12 +66,11 @@ def main():
             # Modify ID in the strand file.
             for ID_bim in d_bim_pos2ID[(chrom, pos)]:
                 if ID_bim in ID or ID_bim.replace('rs', '') in ID:
-                    if ID_bim in d_strand_ID2pos.keys():
+                    if not ID_bim in d_strand_ID2pos.keys():
                         match = True
                         l[0] = ID_bim
                         s += '\t'.join(l) + '\n'
                         # Add to dictionary to avoid duplicates being created in new modified strand file.
-                        assert ID_bim not in d_strand_ID2pos.keys()
                         d_strand_ID2pos[ID_bim] = (chrom, pos)
                         break
             else:
@@ -100,7 +99,7 @@ def main():
 
             continue
 
-    with open(path_strand[:-7] + 'modifiedIDs' + '.strand', 'w') as f:
+    with open(path_strand[:-7] + '.modifiedIDs' + '.strand', 'w') as f:
         f.write(s)
 
 if __name__ == '__main__':
