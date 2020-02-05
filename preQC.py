@@ -94,7 +94,8 @@ def X_XY_duplicates(bfile):
     cmd += " <(awk '$1==25{print $4}' %s.bim | sort)" %(bfile)
     cmd += " <(awk '$1==23{print $4,$2}' %s.bim | sort -k1,1)" %(bfile)
     cmd += " > X.XY.duplicates.SNPs"
-    subprocess.call(cmd, shell = True, executable='/bin/bash')
+    # subprocess.call(cmd, shell=True, executable='/bin/bash')
+    execmd(cmd)
 
     return
 
@@ -268,6 +269,7 @@ def PLINK_remove_and_exclude_and_flip(bfile, strand, plink):
     ## strand flipping
     # cmd = '''cat %s | awk '{if($5=="-") print $1}' | sort -u > flip.SNPs''' %(strand,)
     cmd = 'join -1 1 -2 1 '
+    # cmd = '''join -t $'\t' -1 1 -2 1 '''
     cmd += ' <(cat {} | sort -k1,1 | cut -f1,5,6)'.format(strand)
     cmd += ' <(cat {}.bim | sort -k2,2 | cut -f2,5,6)'.format(bfile)
     cmd += ''' | awk '{{{}; print flip,$0}}' '''.format(
@@ -286,7 +288,7 @@ def PLINK_remove_and_exclude_and_flip(bfile, strand, plink):
             'if($2=="-"&&$3=="TC"&&$4=="G"&&$5=="A") {flip=2}',
             '{flip=0}',
             )))
-    cmd += ''' | awk '$1==1&&substr($4,1,1)!="-"' '''
+    cmd += ''' | awk '$1==1&&substr($4,1,1)!="-"{print $2}' '''
     cmd += ' | sort -u > flip.SNPs'
     execmd(cmd)
 
@@ -314,7 +316,8 @@ def execmd(cmd):
 
     print(inspect.stack()[1][3])
     print(cmd)
-    os.system(cmd)
+    # os.system(cmd)
+    subprocess.call(cmd, shell=True, executable='/bin/bash')
 
     return
 
